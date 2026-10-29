@@ -1,0 +1,37 @@
+# ---------- macOS ----------
+.DS_Store
+
+# ---------- Xcode ----------
+# Per-user settings (window layout, breakpoints, open files)
+xcuserdata/
+*.xcuserstate
+# Build output
+DerivedData/
+build/
+# Archives and exported builds
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ---------- Swift Package Manager ----------
+.build/
+.swiftpm/
+
+# ---------- Go ----------
+# Compiled binaries
+server/bin/
+*.exe
+*.test
+*.out
+# Coverage output
+coverage.*
+
+# ---------- Editors ----------
+.vscode/
+.idea/
+
+# ---------- Secrets ----------
+.env
+.env.*
+!.env.example
+ios/Config/Secrets.xcconfig
