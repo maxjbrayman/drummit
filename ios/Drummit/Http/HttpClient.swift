@@ -37,8 +37,14 @@ enum HttpError: Error {
 }
 
 struct HttpClient: Client {
+    /// Must match the header name the Go server's App Check middleware reads.
+    private static let appCheckHeader = "X-Firebase-AppCheck"
+
     let baseURL: String
-    
+    /// When set, every request carries an App Check token. Nil (the default)
+    /// sends requests without one, e.g. for previews.
+    var appCheckTokenProvider: AppCheckTokenProvider? = nil
+
     func request<Response: Decodable>(
         path: String,
         method: HttpMethod,
@@ -52,11 +58,16 @@ struct HttpClient: Client {
             params: params,
             headers: headers
         )
-        
+
         if let payload {
             urlRequest.httpBody = payload
         }
-        
+
+        if let appCheckTokenProvider {
+            let token = try await appCheckTokenProvider.token()
+            urlRequest.setValue(token, forHTTPHeaderField: Self.appCheckHeader)
+        }
+
         return try await makeRequest(urlRequest)
         
     }
