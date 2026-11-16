@@ -225,7 +225,7 @@ struct ScannerView: View {
         } catch let error as HttpError {
             loadState = .error(error.message)
         } catch {
-            loadState = .error(error.localizedDescription)
+            loadState = .error("An unknown error occurred. Please try again later.")
         }
     }
     

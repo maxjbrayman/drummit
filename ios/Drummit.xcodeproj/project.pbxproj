@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		06BDDB8430ABC68B00E901D3 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 06BDDB8330ABC68B00E901D3 /* FirebaseAppCheck */; };
+		06BDDB8630ABC68B00E901D3 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 06BDDB8530ABC68B00E901D3 /* FirebaseCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		06A85E06306F247E001CB674 /* Drummit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Drummit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,6 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06BDDB8630ABC68B00E901D3 /* FirebaseCore in Frameworks */,
+				06BDDB8430ABC68B00E901D3 /* FirebaseAppCheck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +92,8 @@
 			);
 			name = Drummit;
 			packageProductDependencies = (
+				06BDDB8330ABC68B00E901D3 /* FirebaseAppCheck */,
+				06BDDB8530ABC68B00E901D3 /* FirebaseCore */,
 			);
 			productName = Drummit;
 			productReference = 06A85E06306F247E001CB674 /* Drummit.app */;
@@ -114,6 +123,9 @@
 			);
 			mainGroup = 06A85DFD306F247E001CB674;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				06BDDB8230ABC68B00E901D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 06A85E07306F247E001CB674 /* Products */;
 			projectDirPath = "";
@@ -271,6 +283,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Drummit/Drummit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H7NPNXSBB3;
@@ -290,7 +303,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.max-testing.Drummit";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.max-brayman.Drummit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -309,6 +322,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Drummit/Drummit.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H7NPNXSBB3;
@@ -328,7 +342,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.max-testing.Drummit";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.max-brayman.Drummit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -362,6 +376,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		06BDDB8230ABC68B00E901D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		06BDDB8330ABC68B00E901D3 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 06BDDB8230ABC68B00E901D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		06BDDB8530ABC68B00E901D3 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 06BDDB8230ABC68B00E901D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 06A85DFE306F247E001CB674 /* Project object */;
 }
