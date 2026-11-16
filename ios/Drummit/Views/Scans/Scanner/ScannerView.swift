@@ -223,10 +223,8 @@ struct ScannerView: View {
         } catch let error as URLError where error.code == .cancelled {
             loadState = .idle
         } catch let error as HttpError {
-            print(error.message)
             loadState = .error(error.message)
         } catch {
-            print(error.localizedDescription)
             loadState = .error("An unknown error occurred. Please try again later.")
         }
     }
