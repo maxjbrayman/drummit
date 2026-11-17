@@ -18,6 +18,7 @@ struct BottomTabNavigator: View {
                 ScansTab()
             }
         }
+        .tint(.brandPrimary)
     }
 }
 

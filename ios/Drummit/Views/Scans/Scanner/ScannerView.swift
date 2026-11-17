@@ -183,6 +183,7 @@ struct ScannerView: View {
             }
         }
         .padding(.horizontal)
+        .padding(.top, Spacing.xs)
         .background(.screenBackground)
     }
     

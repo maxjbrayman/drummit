@@ -19,7 +19,7 @@ struct ImageScanService: ImageScanServiceImplementation {
         let (body, contentTypeHeader) = formDataManager.getBodyAndHeader(
             formData: [FormDataEntry(key: "image", value: .fileType(contentType: "image/jpeg", fileName: fileName, data: imageData))]
         )
-        
+                
         return try await client.post(
             path: "/detection",
             payload: body,
