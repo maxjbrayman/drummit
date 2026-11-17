@@ -4,6 +4,7 @@ go 1.27.2
 
 require (
 	firebase.google.com/go/v4 v4.23.0
+	github.com/joho/godotenv v1.5.1
 	google.golang.org/api v0.311.0
 	google.golang.org/genai v1.74.1-0.20261014205110-5e16354c0c0f
 )
