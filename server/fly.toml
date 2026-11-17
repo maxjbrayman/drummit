@@ -1,0 +1,56 @@
+# Fly.io configuration for the Drummit API server.
+# Reference: https://fly.io/docs/reference/configuration/
+
+# Must be unique across all of Fly. Change it if this name is taken.
+app = "drummit-server"
+# Where the machine runs. `fly platform regions` lists the options.
+primary_region = "sjc"
+
+# Our server shuts down gracefully on SIGTERM (finishing running scans), so
+# send that and give it as long as its own shutdown timeout before Fly
+# force-kills it.
+kill_signal = "SIGTERM"
+kill_timeout = "30s"
+
+[build]
+  # Build from the Dockerfile in this folder.
+  dockerfile = "Dockerfile"
+
+# Non-secret settings. Secrets (GEMINI_API_KEY) are set separately with
+# `fly secrets set`, so they never appear in this file or in git.
+[env]
+  PORT = "8080"
+  FIREBASE_PROJECT_ID = "drummit-51624"
+  DETECTION_MAX_CONCURRENT = "5"
+  DETECTION_DAILY_LIMIT = "100"
+
+[http_service]
+  # The port our server listens on inside the machine (matches PORT above).
+  internal_port = 8080
+  # Redirect any plain-HTTP request to HTTPS. Fly provides the certificate.
+  force_https = true
+
+  # Stop the machine when it has no traffic, and start it again on the next
+  # request. This keeps costs near zero, but a stopped machine restarts
+  # fresh, which resets the in-memory daily scan count (the Google Cloud
+  # quota is the hard limit that never resets). To keep the count, set
+  # auto_stop_machines = "off" and min_machines_running = 1 instead, which
+  # keeps one machine running all the time for a few dollars a month.
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  # Fly calls this regularly and stops sending traffic to a machine that
+  # fails it.
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health-check"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+
+# Machine size. 512MB leaves room for several 10MB uploads in progress at
+# once (each is held in memory, plus a base64 copy for Gemini).
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
