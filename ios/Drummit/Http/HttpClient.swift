@@ -114,7 +114,7 @@ struct HttpClient: Client {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw HttpError.invalidResponse
         }
-                
+                        
         switch httpResponse.statusCode {
         case 200...299: break
         case 404: throw HttpError.notFound
