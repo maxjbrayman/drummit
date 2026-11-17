@@ -11,7 +11,6 @@ import Combine
 struct ScannerLoadingView: View {
     private let phrases = ["Analyzing image", "Finding gear", "Reading logos", "Calculating sizes", "Checking finishes", "Counting drums", "Spotting cymbals", "Matching models", "Finding brands", "Tuning"]
     @State private var remainingPhrases: [String] = []
-    @State private var currentIndex: Int = 0
     @State private var currentPhrase: String = ""
     private let timer = Timer.publish(every: 4, on: .main, in: .common).autoconnect()
     
@@ -40,7 +39,7 @@ struct ScannerLoadingView: View {
         .frame(maxWidth: .infinity, alignment: .center)
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: CornerRadius.md).fill(.white).shadow(radius: 1.5)
+            RoundedRectangle(cornerRadius: CornerRadius.md).fill(.cardBackground).shadow(radius: 1.5)
         )
         .onReceive(timer) { _ in
             withAnimation {

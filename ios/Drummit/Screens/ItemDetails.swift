@@ -56,8 +56,6 @@ struct ItemDetails: View {
             if let diameter {
                 itemSize = "\(diameter.formatted())"
             }
-        case .hardware(let type):
-            if let type { itemType = type }
             
         case .stick(let type):
             if let type { itemType = type.displayName }
@@ -122,7 +120,7 @@ struct ItemDetails: View {
                                 .buttonStyle(.borderedProminent)
                             }
                         }
-                        .toolbarBackground(.white, for: .navigationBar)
+                        .toolbarBackground(.screenBackground, for: .navigationBar)
                 }
             }
         

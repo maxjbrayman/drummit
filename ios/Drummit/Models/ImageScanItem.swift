@@ -104,10 +104,7 @@ final class ImageScanItem {
         case "pedal":
             equipmentKind = .pedal
             
-        case "hardware":
-            equipmentKind = .hardware(type: nil)
-            
-        default: equipmentKind = .other(details: nil)
+        default: equipmentKind = .other(details: dto.title)
             
         }
         

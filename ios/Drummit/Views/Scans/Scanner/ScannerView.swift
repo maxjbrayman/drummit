@@ -115,7 +115,7 @@ struct ScannerView: View {
                                             .font(.footnote.weight(.bold))
                                     }
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.tapOnly)
                                 if index < items.count - 1 {
                                     Divider()
                                 }
@@ -123,7 +123,7 @@ struct ScannerView: View {
                     }
                     .padding(.vertical)
                     .padding(.horizontal, Spacing.sm)
-                    .background(.white)
+                    .background(.cardBackground)
                     .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
                     .shadow(radius: shadowRadius)                    
                 }
@@ -183,7 +183,7 @@ struct ScannerView: View {
             }
         }
         .padding(.horizontal)
-        .background(.white)
+        .background(.screenBackground)
     }
     
     private var imageTipView: some View {
@@ -194,7 +194,7 @@ struct ScannerView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Spacing.xs)
-        .background(RoundedRectangle(cornerRadius: CornerRadius.md).fill(.white).shadow(radius: shadowRadius))
+        .background(RoundedRectangle(cornerRadius: CornerRadius.md).fill(.cardBackground).shadow(radius: shadowRadius))
     }
     
     private func startScan() {

@@ -18,7 +18,6 @@ var allowedImageTypes = map[string]bool{
 type Image struct {
 	Data     []byte
 	MIMEType string
-	Filename string
 }
 
 func ReadUploadedImage(w http.ResponseWriter, r *http.Request, field string) (*Image, error) {
@@ -30,7 +29,7 @@ func ReadUploadedImage(w http.ResponseWriter, r *http.Request, field string) (*I
 		return nil, errors.New("The upload couldn't be read. Please try again.")
 	}
 
-	file, handler, err := r.FormFile(field)
+	file, _, err := r.FormFile(field)
 	if err != nil {
 		return nil, errors.New("No image was included in the upload.")
 	}
@@ -51,6 +50,5 @@ func ReadUploadedImage(w http.ResponseWriter, r *http.Request, field string) (*I
 	return &Image{
 		Data:     data,
 		MIMEType: mime,
-		Filename: handler.Filename,
 	}, nil
 }

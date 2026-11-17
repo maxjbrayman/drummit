@@ -37,7 +37,7 @@ struct AppButtonStyle: ButtonStyle {
             case .primary:
                     adjustedTint
             case .outline:
-                    .white
+                    .screenBackground
             }
         }
         

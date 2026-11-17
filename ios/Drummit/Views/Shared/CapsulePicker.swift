@@ -35,11 +35,15 @@ struct CapsulePicker<Item: Identifiable>: View {
                 .bold()
                 .padding(.vertical, Spacing.sm)
                 .padding(.horizontal, Spacing.md)
-                .foregroundStyle(isSelected(item) ? .white : .black)
-                .background(isSelected(item) ? tint : .white, in: Capsule())
+                .foregroundStyle(isSelected(item) ? .white : .primary)
+                .background(isSelected(item) ? tint : .screenBackground, in: Capsule())
                 .overlay {
                     if !isSelected(item) {
-                        Capsule().strokeBorder(.gray, lineWidth: 1)
+                        Capsule()
+                            .strokeBorder(
+                                Color(uiColor: .separator),
+                                lineWidth: 1
+                            )
                     }
                 }
             }

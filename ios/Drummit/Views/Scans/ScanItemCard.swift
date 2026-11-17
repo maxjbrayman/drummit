@@ -36,6 +36,9 @@ struct ScanItemCard<RightContent: View>: View {
             if let number {
                 Text("\(number)")
                     .bold()
+                    // Fixed, not adaptive: the amber circle is bright in both
+                    // modes, so the number must stay dark to be readable.
+                    .foregroundStyle(.black)
                     .frame(width: numberCircleSize, height: numberCircleSize)
                     .background(.brandAccent)
                     .clipShape(Circle())

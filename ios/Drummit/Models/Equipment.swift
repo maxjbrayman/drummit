@@ -19,14 +19,13 @@ enum EquipmentKind: Codable {
     case stick(type: StickType? = nil)
     case drum(type: DrumType? = nil, depth: Double?, diameter: Double?)
     case pedal
-    case hardware(type: String?)
     case other(details: String?)
 }
 
 /// Note: This enum is used to map the EquipmentKind enum to one that is CaseIterable without having to worry about associated values
 /// EquipmentKind is extended with a category var which is a 1:1 map from the EquipmentKind value
 nonisolated enum EquipmentCategory: String, CaseIterable, Codable, Identifiable {
-    case cymbal, drum, stick, pedal, hardware, other
+    case cymbal, drum, stick, pedal, other
 
     var id: Self { self }
 
@@ -36,7 +35,6 @@ nonisolated enum EquipmentCategory: String, CaseIterable, Codable, Identifiable 
         case .drum: "Drums"
         case .stick: "Sticks"
         case .pedal: "Pedals"
-        case .hardware: "Hardware"
         case .other: "Other"
         }
     }
@@ -49,7 +47,6 @@ extension EquipmentKind {
         case .drum: .drum
         case .stick: .stick
         case .pedal: .pedal
-        case .hardware: .hardware
         case .other: .other
         }
     }
@@ -101,14 +98,14 @@ struct Equipment: Codable {
             }
         case .pedal:
             titleTerms.append("Pedal")
-        case .hardware(let type):
-            if let type {
-                titleTerms.append(type)
-            }
         case .other(let details):
             if let details {
                 titleTerms.append(details)
             }
+        }
+        
+        if titleTerms.isEmpty {
+            titleTerms.append("Unknown Item")
         }
         
         return titleTerms.joined(separator: " ")
@@ -153,8 +150,6 @@ struct Equipment: Codable {
             }
         case .pedal:
             terms.append("kick pedal")
-        case let .hardware(type):
-            if let type { terms.append(type) }
         case let .other(details):
             if let details { terms.append(details) }
         }

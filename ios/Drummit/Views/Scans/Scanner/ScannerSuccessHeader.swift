@@ -44,13 +44,16 @@ struct ScannerSuccessHeader: View {
                 .submitLabel(.done)
             Spacer()
             if !isTitleFieldFocused {
-                Image(systemName: "square.and.pencil")
-                    .font(.system(size: 24))
-                    .transition(.opacity)
+                Button(action: { isTitleFieldFocused = true }) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 24))
+                        .transition(.opacity)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(Spacing.sm)
-        .background(.white)
+        .background(.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
         .overlay {
             if titleText.isEmpty {

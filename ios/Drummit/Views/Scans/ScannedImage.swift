@@ -9,6 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct ScannedImage: View {
+    struct PlacedItem {
+        let item: ImageScanItem
+        let bounds: ItemBounds
+        var zIndex: Double = 0
+    }
+    
     let scan: ImageScan
     @Binding var selectedItemId: UUID?
     private let numberSize: CGFloat = 20
@@ -21,6 +27,46 @@ struct ScannedImage: View {
         let height = MathUtils.interpolate(value: bounds.height, from: fromRange, to: (0, proxy.size.height))
         
         return ItemBounds(x: offsetX, y: offsetY, width: width, height: height)
+    }
+    
+    private func isBoundsInsideBounds(innerBounds: ItemBounds, outerBounds: ItemBounds, proxy: GeometryProxy) -> Bool {
+        let innerMaxX = innerBounds.x + innerBounds.width
+        let innerMaxY = innerBounds.y + innerBounds.height
+        let outerMaxX = outerBounds.x + outerBounds.width
+        let outerMaxY = outerBounds.y + outerBounds.height
+        
+        return innerBounds.x > outerBounds.x &&
+        innerBounds.y > outerBounds.y &&
+        innerMaxX < outerMaxX &&
+        innerMaxY < outerMaxY
+        
+    }
+    
+    private func getPlacedItems(proxy: GeometryProxy) -> [PlacedItem] {
+        var items = scan.items.map { item in
+            PlacedItem(
+                item: item,
+                bounds: getInterpolatedBounds(bounds: item.bounds, proxy: proxy)
+            )
+        }
+        
+        items.enumerated().forEach { (index, itemA) in
+            var zIndex: Double = 0
+            items.forEach { itemB in
+                if itemA.item.uuid == itemB.item.uuid { return }
+                
+                print("index: \(index)---")
+                
+                if isBoundsInsideBounds(
+                    innerBounds: itemA.bounds,
+                    outerBounds: itemB.bounds,
+                    proxy: proxy
+                ) { zIndex += 1 }
+            }
+            items[index].zIndex = zIndex
+        }
+        
+        return items
     }
     
     private var img: Image? {
@@ -40,16 +86,15 @@ struct ScannedImage: View {
                 .overlay(alignment: .topLeading) {
                     GeometryReader { proxy in
                         ForEach(
-                            scan.items.enumerated(),
-                            id: \.element.uuid) { (index, item) in
-                            let bounds = getInterpolatedBounds(
-                                bounds: item.bounds,
-                                proxy: proxy
-                            )
+                            getPlacedItems(proxy: proxy).enumerated(),
+                            id: \.element.item.uuid) { (index, placedItem) in
+                                let item = placedItem.item
+                                let bounds = placedItem.bounds
+                                let zIndex = placedItem.zIndex
                                 
-                            let color = Color.brandAccent.opacity(
-                                selectedItemId == nil || selectedItemId == item.uuid ? 1 : 0.5
-                            )
+                                let color = Color.brandAccent.opacity(
+                                    selectedItemId == nil || selectedItemId == item.uuid ? 1 : 0.5
+                                )
                                 
                                 let numberX: CGFloat = min(
                                     max(bounds.x - numberSize / 2, 0),
@@ -60,31 +105,35 @@ struct ScannedImage: View {
                                     max(bounds.y - numberSize / 2, 0),
                                     proxy.size.height - numberSize
                                 )
-                            
-                            ZStack(alignment: .topLeading) {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(
-                                        color,
-                                        lineWidth: 2
-                                    )
-                                    .frame(width: bounds.width, height: bounds.height)
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        selectedItemId = item.uuid
+                                
+                                return ZStack(alignment: .topLeading) {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .strokeBorder(
+                                            color,
+                                            lineWidth: 2
+                                        )
+                                        .frame(width: bounds.width, height: bounds.height)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            selectedItemId = item.uuid
+                                        }
+                                        .offset(x: bounds.x, y: bounds.y)
+                                    Button(action: { selectedItemId = item.uuid }) {
+                                        Text("\(index + 1)")
+                                            .frame(width: numberSize, height: numberSize)
+                                            .background(color, in: Circle())
+                                            .foregroundStyle(.black)
+                                            .font(.system(size: 14))
+                                            .bold()
                                     }
-                                    .offset(x: bounds.x, y: bounds.y)
-                                Text("\(index + 1)")
-                                    .frame(width: numberSize, height: numberSize)
-                                    .background(color, in: Circle())
-                                    .foregroundStyle(.black)
-                                    .font(.system(size: 14))
+                                    .buttonStyle(.plain)
                                     .offset(
                                         x: numberX,
                                         y: numberY
                                     )
-                                    .bold()
+                                }
+                                .zIndex(zIndex)
                             }
-                        }
                     }
                 }
         } else {
