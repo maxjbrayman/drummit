@@ -25,7 +25,7 @@ func LimitConcurrency(max int, next http.Handler) http.Handler {
 			// All slots taken. select picks default when no other case can
 			// proceed without waiting.
 			w.Header().Set("Retry-After", "5")
-			client.JsonError(w, "server is busy, try again shortly", http.StatusServiceUnavailable)
+			client.JsonError(w, "The server is busy. Please try again in a moment.", http.StatusServiceUnavailable)
 		}
 	})
 }

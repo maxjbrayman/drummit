@@ -52,7 +52,7 @@ func (c *DailyCap) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !c.allow() {
 			log.Printf("daily cap: limit of %d reached, rejecting request", c.limit)
-			client.JsonError(w, "daily scan limit reached, try again tomorrow", http.StatusServiceUnavailable)
+			client.JsonError(w, "The daily scan limit has been reached. Please try again tomorrow.", http.StatusServiceUnavailable)
 			return
 		}
 		next.ServeHTTP(w, r)

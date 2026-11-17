@@ -90,13 +90,13 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			// there's no one left to send a response to.
 			return
 		case ctx.Err() == context.DeadlineExceeded:
-			client.JsonError(w, "image detection timed out", http.StatusGatewayTimeout)
+			client.JsonError(w, "The scan took too long. Please try again.", http.StatusGatewayTimeout)
 		case status == http.StatusTooManyRequests:
 			// Gemini's rate limit or our Google Cloud quota was hit, even
 			// after the SDK's own retries.
-			client.JsonError(w, "scanning is busy right now, try again later", http.StatusServiceUnavailable)
+			client.JsonError(w, "Scanning is busy right now. Please try again later.", http.StatusServiceUnavailable)
 		default:
-			client.JsonError(w, "scan failed, please try again", http.StatusBadGateway)
+			client.JsonError(w, "The scan failed. Please try again.", http.StatusBadGateway)
 		}
 		return
 	}
@@ -106,7 +106,7 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var result ScanResponse
 	if err := json.Unmarshal([]byte(output), &result); err != nil {
 		log.Printf("model returned invalid JSON: %v\n%s", err, output)
-		client.JsonError(w, "invalid response from model", http.StatusBadGateway)
+		client.JsonError(w, "The scan failed. Please try again.", http.StatusBadGateway)
 		return
 	}
 
