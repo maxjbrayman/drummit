@@ -1,0 +1,50 @@
+name: Deploy server
+
+on:
+  push:
+    branches: [main]
+    # Only deploy when the server (or this workflow) changed, not for
+    # iOS-only commits.
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy-server.yml"
+  # Adds a "Run workflow" button in the Actions tab for manual deploys.
+  workflow_dispatch:
+
+# If two pushes land close together, finish one deploy before starting the
+# next rather than running them at the same time.
+concurrency:
+  group: deploy-server
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          # Use the exact Go version from go.mod.
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - run: go vet ./...
+      - run: go test ./...
+
+  deploy:
+    # Only deploy if the tests passed.
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      # --remote-only builds the Docker image on Fly's builders.
+      - run: flyctl deploy --remote-only
+        env:
+          # A deploy token stored in the repo's GitHub secrets.
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

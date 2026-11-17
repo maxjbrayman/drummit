@@ -1,0 +1,16 @@
+# Files Docker leaves out of the build context, so they never reach the image.
+
+# Secrets: local env files hold real keys. In production, Fly provides the
+# env vars instead (fly secrets set / [env] in fly.toml).
+.env
+.env.*
+
+# Deployment files the server binary doesn't need.
+Dockerfile
+.dockerignore
+fly.toml
+
+# Editor and OS clutter.
+.DS_Store
+.vscode/
+.idea/
