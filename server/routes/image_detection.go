@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"log"
 	"time"
 
@@ -13,12 +14,14 @@ import (
 	"strings"
 
 	"google.golang.org/genai"
+	"google.golang.org/genai/interactions/models/apierrors"
 	"google.golang.org/genai/interactions/models/interactions"
 	"google.golang.org/genai/interactions/models/operations"
 )
 
-// geminiTimeout caps how long one detection request may wait on Gemini.
-const geminiTimeout = 120 * time.Second
+// GeminiTimeout caps how long one detection request may wait on Gemini.
+// It is exported so the HTTP server can size its WriteTimeout around it.
+const GeminiTimeout = 120 * time.Second
 
 // DetectionHandler handles POST /detection. It holds the shared Gemini
 // client so every request reuses one client instead of building a new one.
@@ -42,8 +45,8 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	base64Image := base64.StdEncoding.EncodeToString(imageData.Data)
 
 	// Tie the Gemini call to the request: it stops if the client disconnects,
-	// and gives up after geminiTimeout either way.
-	ctx, cancel := context.WithTimeout(r.Context(), geminiTimeout)
+	// and gives up after GeminiTimeout either way.
+	ctx, cancel := context.WithTimeout(r.Context(), GeminiTimeout)
 	defer cancel()
 
 	format := interactions.NewCreateModelInteractionResponseFormat(
@@ -75,12 +78,26 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("gemini call took %s", time.Since(start).Round(time.Millisecond))
 
 	if genaiErr != nil {
-		log.Printf("gemini error: %v", genaiErr)
-		if ctx.Err() == context.DeadlineExceeded {
-			client.JsonError(w, "image detection timed out", http.StatusGatewayTimeout)
+		// The full error stays in the server log. The app only gets a short
+		// message, so Gemini's internal details (model names, quota
+		// messages, request IDs) never leave the server.
+		status := geminiStatusCode(genaiErr)
+		log.Printf("gemini error (status %d): %v", status, genaiErr)
+
+		switch {
+		case r.Context().Err() != nil:
+			// The app disconnected (e.g. the user left the screen), so
+			// there's no one left to send a response to.
 			return
+		case ctx.Err() == context.DeadlineExceeded:
+			client.JsonError(w, "image detection timed out", http.StatusGatewayTimeout)
+		case status == http.StatusTooManyRequests:
+			// Gemini's rate limit or our Google Cloud quota was hit, even
+			// after the SDK's own retries.
+			client.JsonError(w, "scanning is busy right now, try again later", http.StatusServiceUnavailable)
+		default:
+			client.JsonError(w, "scan failed, please try again", http.StatusBadGateway)
 		}
-		client.JsonError(w, genaiErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -102,6 +119,24 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(result); err != nil {
 		log.Printf("encoding response: %v", err)
 	}
+}
+
+// geminiStatusCode returns the HTTP status code Gemini replied with, or 0 if
+// the call failed without a reply (e.g. a network error or a timeout).
+// The SDK uses a different error type for 4xx, 5xx and unexpected replies,
+// so each one is checked.
+func geminiStatusCode(err error) int {
+	if e, ok := errors.AsType[*apierrors.CreateInteractionClientError](err); ok && e.HTTPMeta.Response != nil {
+		return e.HTTPMeta.Response.StatusCode
+	}
+	if e, ok := errors.AsType[*apierrors.CreateInteractionServerError](err); ok && e.HTTPMeta.Response != nil {
+		return e.HTTPMeta.Response.StatusCode
+	}
+	if e, ok := errors.AsType[*apierrors.APIError](err); ok {
+		return e.StatusCode
+	}
+
+	return 0
 }
 
 func getOutputText(i *interactions.Interaction) string {
