@@ -14,8 +14,8 @@ enum HttpError: Error {
     case notFound
     case forbidden
     case notAuthenticated
-    case serverError(code: Int)
-    
+    case serverError(code: Int, message: String?)
+
     var message: String {
         switch self {
         case .invalidURL:
@@ -30,8 +30,8 @@ enum HttpError: Error {
             "The requested action is not allowed."
         case .notAuthenticated:
             "The requested action requires authentication."
-        case .serverError:
-            "An unknown server error occurred."
+        case .serverError(_, let message):
+            message ?? "An unknown server error occurred."
         }
     }
 }
@@ -120,7 +120,11 @@ struct HttpClient: Client {
         case 404: throw HttpError.notFound
         case 403: throw HttpError.forbidden
         case 401: throw HttpError.notAuthenticated
-        default: throw HttpError.serverError(code: httpResponse.statusCode)
+        default:
+            throw HttpError.serverError(
+                code: httpResponse.statusCode,
+                message: serverErrorMessage(from: data)
+            )
         }
         
         let decoder = JSONDecoder()
@@ -128,5 +132,18 @@ struct HttpClient: Client {
         decoder.dateDecodingStrategy = .iso8601
         
         return try decoder.decode(Response.self, from: data)
+    }
+
+    /// Reads the server's {"error": "..."} message from an error response.
+    /// Returns nil when the body isn't in that shape, e.g. an HTML error page
+    /// from a proxy or load balancer in front of the server.
+    private func serverErrorMessage(from data: Data) -> String? {
+        guard
+            let body = try? JSONDecoder().decode(APIErrorDTO.self, from: data),
+            !body.error.isEmpty
+        else {
+            return nil
+        }
+        return body.error
     }
 }
