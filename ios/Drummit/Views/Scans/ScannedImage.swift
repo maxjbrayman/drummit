@@ -54,9 +54,7 @@ struct ScannedImage: View {
             var zIndex: Double = 0
             items.forEach { itemB in
                 if itemA.item.uuid == itemB.item.uuid { return }
-                
-                print("index: \(index)---")
-                
+                                
                 if isBoundsInsideBounds(
                     innerBounds: itemA.bounds,
                     outerBounds: itemB.bounds,

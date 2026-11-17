@@ -27,6 +27,7 @@ struct Scans: View {
     @State private var filters = ScansFilters()
     @State private var showFilters = false
     @State private var showCamera = false
+    @State private var showInvalidImageAlert = false
     
     private var columns: [GridItem] {
         [
@@ -142,9 +143,15 @@ struct Scans: View {
                     ) {
                         selectedImage = SelectedImage(image: loaded)
                     } else {
-                        print("Failed")
+                        showInvalidImageAlert = true
+                        selectedItem = nil
                     }
                 }
+            }
+            .alert("Invalid image", isPresented: $showInvalidImageAlert) {
+                
+            } message: {
+                Text("The image you selected is not valid. Please select another one.")
             }
             .sheet(
                 item: $selectedImage,
