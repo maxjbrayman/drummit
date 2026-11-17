@@ -24,7 +24,6 @@ struct Scans: View {
     @State private var selectedImage: SelectedImage? = nil
     
     @State private var searchText = ""
-    @State private var scrollY: CGFloat = 0
     @State private var filters = ScansFilters()
     @State private var showFilters = false
     @State private var showCamera = false

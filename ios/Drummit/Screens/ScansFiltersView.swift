@@ -69,14 +69,6 @@ struct ScansFiltersView: View {
         .now
     }
     
-    private var maxDate: Date {
-        Date()
-    }
-    
-    private var minDate: Date {
-        Calendar.current.date(byAdding: .year, value: -2, to: maxDate)!
-    }
-    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.xl) {
@@ -129,7 +121,7 @@ struct ScansFiltersView: View {
                         .font(.headline)
                     Text("Hide scans with nothing in My Gear")
                         .font(.subheadline)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
@@ -150,7 +142,7 @@ struct ScansFiltersView: View {
             Text("Show scans that contain any of the selected types")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: 15))
-                .foregroundStyle(.gray)
+                .foregroundStyle(.secondary)
         }
     }
     
@@ -193,7 +185,7 @@ struct ScansFiltersView: View {
                     }
                     .padding(Spacing.md)
                 }
-                .background(.white)
+                .background(.cardBackground)
                 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.lg))
                 .shadow(radius: 2)
             }
@@ -214,7 +206,7 @@ struct ScansFiltersSection<Content: View, HeaderRight: View>: View {
                 headerRight()
             }
             .bold()
-            .foregroundStyle(.gray)
+            .foregroundStyle(.secondary)
             content()
         }
     }

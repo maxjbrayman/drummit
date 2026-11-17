@@ -16,4 +16,5 @@ struct ImageDetectionItemDTO: Decodable {
     let confidenceExplanation: String?
     let improvementSuggestions: [String]
     let box2D: [Int]
+    let title: String?
 }

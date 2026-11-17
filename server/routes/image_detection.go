@@ -234,6 +234,10 @@ var itemSchema map[string]any = map[string]any{
 			"items":       map[string]any{"type": "integer"},
 			"description": "The 2D bounding box of the item as [ymin, xmin, ymax, xmax] normalized to 0-1000.",
 		},
+		"title": map[string]any{
+			"type":	"string",
+			"description": "This is a fallback value that is used by a client when 'brand' and 'model' do not exist. This should be a simple title/name of the item based on what has been identified, a few words at most.",
+		},
 	},
 }
 
@@ -264,6 +268,7 @@ type ScanResponseItem struct {
 	ImprovementSuggestions []string `json:"improvement_suggestions"`
 	ConfidenceLevel        string   `json:"confidence_level"`
 	ConfidenceExplanation  string   `json:"confidence_explanation,omitempty"`
+	Title				   string	`json:"title"`	
 	Subtype                *string  `json:"subtype,omitempty"`
 	Brand                  *string  `json:"brand,omitempty"`
 	Model                  *string  `json:"model,omitempty"`

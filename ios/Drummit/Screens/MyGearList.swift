@@ -13,7 +13,6 @@ enum MyGearSection: String {
     case sticks = "Sticks"
     case drums = "Drums"
     case pedals = "Pedals"
-    case hardware = "Hardware"
     case other = "Other"
 }
 
@@ -33,8 +32,6 @@ struct MyGearListSection: Identifiable {
             2
         case .pedals:
             3
-        case .hardware:
-            4
         case .sticks:
             5
         case .other:
@@ -115,8 +112,6 @@ struct MyGearList: View {
                 .drums
         case .pedal:
                 .pedals
-        case .hardware:
-                .hardware
         case .other:
                 .other
         }
