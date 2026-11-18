@@ -71,7 +71,7 @@ func (h *DetectionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			})),
 			ResponseFormat: new(format),
 			GenerationConfig: new(interactions.GenerationConfig{
-				ThinkingLevel: interactions.ThinkingLevelMedium.ToPointer(),
+				ThinkingLevel: interactions.ThinkingLevelHigh.ToPointer(),
 			}),
 		}),
 	})
