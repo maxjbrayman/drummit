@@ -2,6 +2,10 @@
 
 Drummit is an iOS app that detects and identifies drum equipment in photos. The app sends images to a small Go server, which calls Gemini's API to recognize the gear and returns the results to the app.
 
+## [Download on the App Store](https://apps.apple.com/us/app/drummit-drum-gear-scanner/id6836046076)
+
+## Run Drummit locally
+
 ```
 ios/      SwiftUI iOS app (Xcode project)
 server/   Go server that talks to the Gemini API
